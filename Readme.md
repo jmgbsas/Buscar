@@ -1,4 +1,4 @@
-# BUSCAR (find), sencilla tool en FreeBasic para Consola, sin flags 
+# BUSCAR (find), sencilla tool en FreeBasic para Consola, sin flags.
 ```
   Absoluta es todo el nombre completo despues de "\" en windows, donde comienza un nombre.
  Parcial puede estar en cualquier parte del path, se puede adaptar en linux a la "/" de
