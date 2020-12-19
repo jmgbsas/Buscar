@@ -9,16 +9,17 @@
     Dim  filetype(1 To 10) As String
     
     Dim aop As String
-    Dim NRO As double
-    Dim As Integer cant, i, cont, result          
+    Dim Shared NRO As double
+    Dim As Integer cant, i, cont, result  
+    Declare Sub aviso ()        
     'Screen 20, 32, 1          
     'Color &h000040, &h008080
     do
     cls
     'locate 2, 2
     print " Buscar archivo desde donde se esta posicionado v 1.0"
-    Print " un Nombre de archivo y/o hasta 10 Extensiones, o"
-    Print " El Nombre, o la/s Extension pueden estar en blanco  "
+    Print " un Nombre de archivo y/o hasta 10 Extensiones."
+    Print " El Nombre o la/las Extension pueden estar en blanco  "
      
 
     Input "Entre  parte del [N]ombre : ", filename
@@ -55,18 +56,24 @@
     If aop ="A" Then
     	 filename="\"+filename
     EndIf
-    
+ ' ===================================   
     open Pipe "dir *.* /b /s" for input as #1
-    
+    dim Shared blink as Short = 0
+     
+    Dim Shared As String aviso1,aviso2, aviso3 
+    aviso1="/"
+    aviso2="\"
+    aviso3="-"
        Dim flagtype As BOOLEAN = FALSE
        Dim flagname As Boolean = FALSE
        Dim as Integer lenExtension, lenText1, posi
+   Cls
+   NRO = 0
+   Do While Not Eof(1)
+ 	   Line Input #1, text1
+     text1 = UCase(text1)
+     If NRO >= 0  Then aviso() endif 
      If filename = "" Then ' hay solo extensiones
-
-        Do While not eof(1)
-        	   Line Input #1, text1
-        	   NRO = NRO + 1
-             text1 = UCase(text1)
              For i = 1 To cant            
               posi = InStr(text1, filetype(i))
               If (posi > 0 ) Then
@@ -75,22 +82,19 @@
                'verificacion si es extension
                 If (lentext1 - lenExtension + 1) = posi Then
                   ' es una extension
-                   Print "[E]"; text1
-                   If NRO = 15 Then
-                     Print "presione para mas.."
+                   Print " [E]"; text1
+                   NRO = NRO + 1
+                   If NRO = 50 Then
+                     Print "presione para mas..."
                       NRO = 0
                      Sleep
                    EndIf
                 Endif
               EndIf
              Next i 
-        Loop
+        
      Else
      	If filetype(1) > ""  Then ' hay nombre y al menos 1 extension
-        Do While not eof(1)
-        	   Line Input #1, text1
-'	   NRO = NRO + 1
-            text1 = UCase(text1)
             
             flagtype = FALSE
             flagname = FALSE
@@ -105,45 +109,74 @@
              
             	 
               If flagname And flagtype Then
-                print "[NE]"; text1
-                If NRO = 15 Then
+                print " [NE]"; text1
+                NRO = NRO + 1
+                 If aop="A" Then
+                    NRO=50
+                    Print "match completo nombre y extension"
+                 EndIf
+
+                If NRO = 50 Then
                   Print "presione para mas.."
                    NRO = 0
+                   If aop="A" Then
+                     NRO=0
+                   EndIf
+
                   Sleep
                 EndIf  
               End If
             Next i   
-        Loop
+        
      	EndIf  
      EndIf
      
    If filetype(1) = ""  Then ' solo hay nombre 
-   
-        Do While Not Eof(1)
-        	   Line Input #1, text1
-        '   NRO = NRO + 1
-            text1 = UCase(text1)
+       If InStr(text1, filename) > 0  Then
+           print " [N]> "; text1
+            NRO = NRO + 1
+             If NRO = 50 Then
+              Print "presione para 50 mas.."
+              NRO = 0
+              Sleep
+             EndIf
+       EndIf
 
-            If InStr(text1, filename) > 0  Then
-                print "[N]> "; text1
-                If NRO = 15 Then
-                  Print "presione para mas.."
-                  NRO = 0
-                Sleep
-                EndIf
-            EndIf
-        Loop    
-
-  EndIf
-
+   EndIf
+Loop
 
     close #1
 
   Print "FIN => "
-  print "Fin de la busqueda  Presione para salir...." ' ; NRO; " archivos revisados"
+  print "Fin de la busqueda  Presione para salir...." 
   Print "Si termina inesperadamente antes, algun nombre tiene el caracter -> "
   Print " fin de archivo, cerca del archivo en FIN=> , renombrarlo o borrarlo "
     
     sleep
     End
-    
+ Sub aviso ()
+  Dim fila As Integer
+     fila = CsrLin
+ 	   if blink= 0 Then
+   	    blink = blink + 1
+   	    Locate fila -1 ,1
+        Print aviso1
+                 
+ 	   Else 
+        If blink = 50 Then
+           Locate fila -1 ,1
+           Print aviso2
+           blink=0
+        Else
+      	    blink = blink + 1
+        End If
+        If blink = 25 Then
+           Locate fila -1 ,1
+           Print aviso3
+      	    blink = blink + 1
+        End If
+
+ 	   EndIf
+ 
+ End Sub
+   
