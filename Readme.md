@@ -9,9 +9,6 @@
 - Imprime por pantalla el path completo, como todas las tools. Para mejor uso ponerlo 
   el cualqueir lugar del PATH.
 - compiled for amd64 fbc -s console -arch amd64 -gen gcc -O 2
-=======
-- Imprime por pantalla el path completo, como todas las tools. Para mejor uso ponerlo 
-  en cualquier lugar del PATH.
 
 
 
