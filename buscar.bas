@@ -9,7 +9,8 @@
     Dim  filetype(1 To 10) As String
     
     Dim aop As String
-    Dim Shared NRO As double
+    Dim Shared NRO As UInteger<64>
+    Dim nume As UInteger<64>
     Dim As Integer cant, i, cont, result  
     Declare Sub aviso ()        
     'Screen 20, 32, 1          
@@ -34,6 +35,8 @@
       Exit do
      EndIf 
     Loop
+    Dim anv As String 
+  
     Do
       If extension > "" Then
       	extension = "."+ RTrim(LTrim(UCase(extension)))
@@ -46,6 +49,8 @@
         Exit Do
       EndIf    
     Loop
+    Input "archivo nuevo [N/n] o viejo [V/v] ", anv
+    anv=UCase(RTrim(LTrim(anv)))
     
     filename = RTrim(LTrim(UCase(filename)))
     aop     = RTrim(LTrim(UCase(aop)))
@@ -57,7 +62,20 @@
     	 filename="\"+filename
     EndIf
  ' ===================================   
-    open Pipe "dir *.* /b /s" for input as #1
+    Dim comBus As String 
+    If filename > "" And filetype(1) = "" Then
+        comBus="dir *.* /b /s /ON"
+    EndIf
+    If filename >= "" And filetype(1) > "" Then
+     comBus = "dir *.* /b /s /OE" 
+    EndIf
+    If anv =  "N" Then
+     comBus = comBus + " /-D"
+    EndIf
+    If anv > "V" Then
+     comBus = comBus + " /D"
+    EndIf
+    open Pipe comBus  for input as #1
     dim Shared blink as Short = 0
      
     Dim Shared As String aviso1,aviso2, aviso3 
@@ -67,12 +85,28 @@
        Dim flagtype As BOOLEAN = FALSE
        Dim flagname As Boolean = FALSE
        Dim as Integer lenExtension, lenText1, posi
+       Dim USER As String
    Cls
    NRO = 0
    Do While Not Eof(1)
  	   Line Input #1, text1
+ 	   'evitar C:\$Recycle.Bin 
+ 	   If InStr(text1,"C:\$Recycle.Bin") > 0 Then
+ 	     Continue do
+ 	   EndIf
+ 	   ' evitamos directorios de programas
+ 	   If InStr(text1,"C:\.") > 0 Then
+ 	     Continue do
+ 	   EndIf
+ 	   USER=Environ("USERPROFILE")
+ 	   USER=USER +"\."
+ 	   If InStr(text1, USER) > 0 Then
+ 	     Continue do
+ 	   EndIf
+
+ 	   nume= nume + 1
      text1 = UCase(text1)
-     If NRO >= 0  Then aviso() endif 
+
      If filename = "" Then ' hay solo extensiones
              For i = 1 To cant            
               posi = InStr(text1, filetype(i))
@@ -151,10 +185,12 @@ Loop
   print "Fin de la busqueda  Presione para salir...." 
   Print "Si termina inesperadamente antes, algun nombre tiene el caracter -> "
   Print " fin de archivo, cerca del archivo en FIN=> , renombrarlo o borrarlo "
+  Print "cantidad de archivos barridos "; nume
     
     sleep
     End
  Sub aviso ()
+  ' baja la performnce se congela de a ratos no usar
   Dim fila As Integer
      fila = CsrLin
  	   if blink= 0 Then
