@@ -5,27 +5,32 @@
     ' por consola, compilar con windows console
     ' para mayor performance usar flags de gcc
     ' puede haber nombres muy largos que no soporta 
-    Dim As String text, filename, text1, extension
+    'Declare Sub aviso ()
+    Dim As String text, filename, text1, extension,com
     Dim  filetype(1 To 10) As String
     
     Dim aop As String
     Dim Shared NRO As UInteger<64>
     Dim nume As UInteger<64>
-    Dim As Integer cant, i, cont, result  
-    Declare Sub aviso ()        
+    Dim As Integer cant, i, cont, result
+     
+      
+            
     'Screen 20, 32, 1          
     'Color &h000040, &h008080
     do
     cls
     'locate 2, 2
-    print " Buscar archivo desde donde se esta posicionado v 1.0"
-    Print " un Nombre de archivo y/o hasta 10 Extensiones."
+    print " Buscar archivo desde donde se esta posicionado v 1.1"
+    Print " un Nombre completo o parcial de archivo y/o hasta 10 Extensiones."
     Print " El Nombre o la/las Extension pueden estar en blanco  "
      
 
-    Input "Entre  parte del [N]ombre : ", filename
+    Input "Entre [N]ombre : ", filename
+     
+    Input " Si es nombre completo o es parte del comienzo siga, si no entre cualquier letra ", com 
     
-    Input "Absoluto o parcial aA/Pp: ", aop
+'    Input "Absoluto o parcial aA/Pp: ", aop
     cant=0
     Input "Entre hasta 10 [E]xtensiones de a una, nada para terminar y/o todas: ", extension
      If (filename = "")  And (extension = "") then
@@ -53,12 +58,12 @@
     anv=UCase(RTrim(LTrim(anv)))
     
     filename = RTrim(LTrim(UCase(filename)))
-    aop     = RTrim(LTrim(UCase(aop)))
+    ' aop     = RTrim(LTrim(UCase(aop)))
     
  'Print "len filename "; Len (filename)
  'Print "len extension "; Len (extension)
     
-    If aop ="A" Then
+    If com = "" Then
     	 filename="\"+filename
     EndIf
  ' ===================================   
