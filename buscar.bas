@@ -5,8 +5,8 @@
     ' por consola, compilar con windows console
     ' para mayor performance usar flags de gcc
     ' puede haber nombres muy largos que no soporta 
-    'Declare Sub aviso ()
-    Dim As String text, filename, text1, extension,com
+    Declare Sub aviso ()
+    Dim As String text, filename, text1, extension,com, barra
     Dim  filetype(1 To 10) As String
     
     Dim aop As String
@@ -89,8 +89,9 @@
     aviso3="-"
        Dim flagtype As BOOLEAN = FALSE
        Dim flagname As Boolean = FALSE
-       Dim as Integer lenExtension, lenText1, posi
+       Dim as Integer lenExtension, lenText1, posif,posib,lenfilename,posie
        Dim USER As String
+     
    Cls
    NRO = 0
    Do While Not Eof(1)
@@ -99,7 +100,7 @@
  	   If InStr(text1,"C:\$Recycle.Bin") > 0 Then
  	     Continue do
  	   EndIf
- 	   ' evitamos directorios de programas
+ 	   ' evitamos directorios de programas inicio con punto.
  	   If InStr(text1,"C:\.") > 0 Then
  	     Continue do
  	   EndIf
@@ -114,12 +115,12 @@
 
      If filename = "" Then ' hay solo extensiones
              For i = 1 To cant            
-              posi = InStr(text1, filetype(i))
-              If (posi > 0 ) Then
+              posie = InStrRev(text1, filetype(i))
+              If (posie > 0 ) Then
                lenExtension = Len(filetype(i))
                lenText1 = Len(text1)
                'verificacion si es extension
-                If (lentext1 - lenExtension + 1) = posi Then
+                If (lentext1 - lenExtension + 1 = posie) Then
                   ' es una extension
                    Print " [E]"; text1
                    NRO = NRO + 1
@@ -133,27 +134,43 @@
              Next i 
         
      Else
-     	If filetype(1) > ""  Then ' hay nombre y al menos 1 extension
-            
+      posif = InStrRev(text1,filename)
+      If posif > 0 Then
+         flagname = true
+      EndIf
+     	If filetype(1) > "" And posif > 0  Then ' hay nombre y al menos 1 extension
+            'Print "DBG>";text1
             flagtype = FALSE
-            flagname = FALSE
-            If  InStr(text1, filename) > 0 Then
-            	  flagname = TRUE
-            EndIf
             
+            ' existe pero podria ser del path no del archivo
+            ' buscamos el separodor \ si es el ultimo o no
+            ' verificamos que este al final del path antes de 
+            ' la extension archivo
+            lenText1 = Len(text1)
+                 
+            posib=InStrRev(Text1,"\")
+            if posif <> posib  And com =""  Then 
+               flagname=FALSE  
+
+            EndIf
+                 
+              
+            
+           
             For i = 1 To cant
               If InStr(text1, filetype(i) ) > 0 Then
-            	    flagtype = TRUE 
+                 lenExtension = Len(filetype(i))
+                posie = InStrRev(text1, filetype(i)) 
+               'verificacion si es extension
+                If (lentext1 - lenExtension + 1 = posie) Then
+             	    flagtype = TRUE 
+                EndIf
               EndIf
              
             	 
               If flagname And flagtype Then
                 print " [NE]"; text1
                 NRO = NRO + 1
-                 If aop="A" Then
-                    NRO=50
-                    Print "match completo nombre y extension"
-                 EndIf
 
                 If NRO = 50 Then
                   Print "presione para mas.."
@@ -170,8 +187,18 @@
      	EndIf  
      EndIf
      
-   If filetype(1) = ""  Then ' solo hay nombre 
-       If InStr(text1, filename) > 0  Then
+   If filetype(1) = ""  Then ' solo hay nombre
+            flagname = FALSE
+
+            posif = InStrRev(text1,filename)     
+            posib=InStrRev(Text1,"\")
+      
+               If posif = i Then 
+                   flagname=TRUE
+               endif   
+            
+
+       If flagname  Then
            print " [N]> "; text1
             NRO = NRO + 1
              If NRO = 50 Then
@@ -194,8 +221,8 @@ Loop
     
     sleep
     End
- Sub aviso ()
-  ' baja la performnce se congela de a ratos no usar
+Sub aviso ()
+  ' baja la performance se congela de a ratos no usar
   Dim fila As Integer
      fila = CsrLin
  	   if blink= 0 Then
@@ -219,5 +246,5 @@ Loop
 
  	   EndIf
  
- End Sub
+End Sub
    
