@@ -29,7 +29,7 @@
 
     Input "Entre [N]ombre : ", filename
      
-    print " Si es nombre completo o primeras letras del nombnre siga,"
+    print " Si es nombre completo o primeras letras del nombre siga,"
     Input " si no entre cualquier letra ", com 
     
 
