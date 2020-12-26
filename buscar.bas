@@ -5,7 +5,7 @@
     ' por consola, compilar con windows console
     ' para mayor performance usar flags de gcc
     ' puede haber nombres muy largos que el pipe  no soporta 
-
+    Dim e As Integer
     Dim As String text, filename, text1, extension,com, barra,tipo,grabar,path
     Dim  filetype(1 To 10) As String
     
@@ -165,8 +165,8 @@
 
  	   nume= nume + 1
  	   control = control + 1
- 	   If control=500000 Then
- 	     Print "cantidad analizados "; nume
+ 	   If control >=500000 Then
+ 	     Print "cantidad analizados sin cache "; nume
  	      control = 0
  	   EndIf
  	   
@@ -195,9 +195,13 @@
     
    ' sleep
 errorhandler:
-Dim e As Integer 
+ 
 e = Err
- Print "Error detected ", e
- Print Erl, Erfn,Ermn,Err
+ If e > 0 Then 
+   Print "Error detected ", e
+   Print Erl, Erfn,Ermn,Err
+ Else
+   Print "ok ";e
+ EndIf
  
    
