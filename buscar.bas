@@ -6,7 +6,7 @@
     ' para mayor performance usar flags de gcc
     ' puede haber nombres muy largos que el pipe  no soporta 
 
-    Dim As String text, filename, text1, extension,com, barra,tipo
+    Dim As String text, filename, text1, extension,com, barra,tipo,grabar,path
     Dim  filetype(1 To 10) As String
     
     Dim  As BOOLEAN carpeta, encontro
@@ -22,20 +22,29 @@
     do
     cls
     'locate 2, 2
-    print " Buscar archivo desde donde se esta posicionado v 1.2"
+    print " Buscar archivo desde donde se esta posicionado v 1.4"
     Print " un Nombre completo o parcial de archivo y/o hasta 10 Extensiones."
     Print " El Nombre o la/las Extension pueden estar en blanco  "
-     
 
     Input "Entre [N]ombre : ", filename
      
     print " Si es nombre completo o primeras letras del nombre siga,"
     Input " si no entre cualquier letra ", com 
-    
-
     cant=0
     Input "Entre hasta 10 [E]xtensiones de a una, Nada para terminar : ", extension
-     If (filename = "")  And (extension = "") then
+    input "¿Grabar la busqueda?, Default No Graba ",grabar
+    If grabar > "" Then
+     Print "si no tiene permisos de escritura desde donde está"
+     print "entre el path y nombre completos de archivo donde graba "
+     
+     Input "path: ", path
+     If path > "" Then
+       path = RTrim(LTrim(path))
+     End If
+     
+    EndIf 
+
+    If (filename = "")  And (extension = "") then
       Print "ingrese alguna parte de un nombre  o alguna extension"
       
      Else
@@ -118,13 +127,26 @@
     Dim flagname As Boolean = FALSE
     Dim as uInteger lenExtension, lenText1,lenfilename
     Dim As UInteger posif,posib, posie
-    Dim USER As String
+    Dim  As String USER
      
    Cls
    'Print comBus
    NRO = 0
    lenfilename = len(filename)
-   ' ======== LOOP =============
+   ' ============================
+     Print grabar, path
+     
+     If grabar > "" Then
+       If path > "" Then
+          Open path For Output As 2
+          Print "Se graba tambien salida en "; path
+       Else 
+          Open "busqueda.txt" For Output As 2
+          Print "Se graba tambien salida  Busqueda.txt"
+       EndIf
+         
+     EndIf
+   '==========LOOP=================
    Do While Not Eof(1)
  	   Line Input #1, text1
  	   'evitar C:\$Recycle.Bin 
@@ -149,17 +171,33 @@
  	   EndIf
  	   
  	     Print tipo + text1
+ 	   If grabar > "" Then
+ 	       Print #2, text1
+ 	   EndIf
        
    Loop
 
-    Close #1
-
+    Close #1, #2
+    
   Print "FIN => "
   print "Fin de la busqueda  Presione para salir...." 
   Print "Si termina inesperadamente antes, algun nombre tiene el caracter -> "
   Print " fin de archivo, cerca del archivo en FIN=> , renombrarlo o borrarlo "
   Print "cantidad de archivos barridos "; nume
+  If grabar > "" Then
+     Print "archivo grabado Busqueda.txt "
+     If path > "" Then
+       Shell "notepad " + path
+     Else
+       Shell "notepad Busqueda.txt"
+     EndIf
+  EndIf
     
-    sleep
-    End
+   ' sleep
+errorhandler:
+Dim e As Integer 
+e = Err
+ Print "Error detected ", e
+ Print Erl, Erfn,Ermn,Err
+ 
    
