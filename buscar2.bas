@@ -227,7 +227,6 @@
                EndIf
          Else
           longitud=0
-           Print "ENTRO NAME [N]  "
              tipo = " [N]"
          EndIf
          If tipo > "" Then
