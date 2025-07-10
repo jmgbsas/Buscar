@@ -1,5 +1,5 @@
     '#Include Once "windows.bi"
-    ' agregamos busqueda por tamaño  compilado para amd64   
+    ' agregamos busqueda por tamaño  compilado para amd64 v3  
 '            fbc64 -gen gcc -t 65536 -fpu SSE -arch amd64 
     #include once  "file.bi"
     'Jose M Galeano pequeña Tool simple de busqueda 
@@ -9,6 +9,7 @@
     ' puede haber nombres muy largos que no soporta 
    ''' Print FileLen("C:\IT64\BUSCAR")
  ''''End
+ ' falta recorer las extensiones en algunos casos SEGUIR
 
     Dim As String text, filename,  extension
     Dim  filetype(1 To 10) As String
@@ -81,7 +82,7 @@
      comBus = "dir *.* /b /s /OE" 
     EndIf
     If filename = "" And filetype(1) = "" Then ' nada
-        comBus="dir *.* /b /s /O"
+        comBus="dir *.* /b /s /O-S"
     EndIf
 
     If anv =  "N" Then
@@ -123,7 +124,7 @@
         'interesa mostrar filtrado por tamaño  
      'EndIf
      If filename = "" And filetype(1) > "" Then '  no hay nombre y hay al menos 1 extension  
-             For i = 1 To cant            
+             For i = 1 To cant  'barro todas las extensiones          
               posi = InStr(text1, filetype(i))
               If (posi > 0 ) Then
                lenExtension = Len(filetype(i))
@@ -152,8 +153,8 @@
               EndIf
              Next i 
         
-     Else  'hay nombre 
-     	If filename > "" And filetype(1) > ""  Then ' hay nombre y al menos 1 extension
+     EndIf
+     If filename > "" And filetype(1) > ""  Then ' hay nombre y al menos 1 extension
             
             flagtype = FALSE
             flagname = FALSE
@@ -175,6 +176,7 @@
               EndIf     	 
               If flagname And flagtype  Then
                  tipo= "" 
+                 Print "flagname And flagtype trues"
                 If tamdesde=0 And tamhasta=0 Then
                    longitud=0
                    tipo = " [NE]"
@@ -192,25 +194,45 @@
                 EndIf 
               EndIf
             Next i   
-      Else ' ni nombre ni extension debe haber al menos tamaño
- 
-        If filename="" And filetype(1) = ""  Then ' ni nombre ni extensoin
+     EndIf 
+     If filename="" And filetype(1) = ""  Then ' ni nombre ni extension
           If tamdesde > 0 Or tamhasta > 0 Then
          '    Print "tamdesde, tamhasta  ",tamdesde , tamhasta
              longitud=FileLen(text1)
              tipo = "" 
              If tamdesde > 0 And longitud >= tamdesde And tamhasta=0 Then
-                tipo = " [NT1]"
+                tipo = " [T1]"
              EndIf 
              If tamdesde > 0 And tamhasta > 0 And longitud >= tamdesde And longitud <= tamhasta Then
-                tipo = " [NT12]"
+                tipo = " [T12]"
              EndIf
              If tipo > "" Then
                 tama() 
              EndIf 
+
           EndIf 
-        EndIf
-      EndIf
+     EndIf   
+
+     If InStr(text1, filename) > 0  And filetype(1) = "" Then
+            
+         If tamdesde > 0 Or tamhasta > 0 Then
+         '    Print "tamdesde, tamhasta  ",tamdesde , tamhasta
+               longitud=FileLen(text1)
+               tipo = "" 
+               If tamdesde > 0 And longitud >= tamdesde And tamhasta=0 Then
+                tipo = " [NT1]"
+               EndIf 
+               If tamdesde > 0 And tamhasta > 0 And longitud >= tamdesde And longitud <= tamhasta Then
+                tipo = " [NT12]"
+               EndIf
+         Else
+          longitud=0
+           Print "ENTRO NAME [N]  "
+             tipo = " [N]"
+         EndIf
+         If tipo > "" Then
+           tama() 
+         EndIf
   
  	  EndIf  
     
