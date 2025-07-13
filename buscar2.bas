@@ -273,10 +273,10 @@ Sub tama()
     NRO = NRO + 1
     If NRO = 20 Then
        If paginado=1 Then
+         Sleep
          Print "presione para mas..."
        EndIf
        NRO = 0
-       Sleep
     EndIf
 
 End Sub   
