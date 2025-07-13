@@ -1,3 +1,5 @@
+' se agrega opcion de grabar archivo em directorio local o si estamos en raiz c:
+' grabar en un archivo dentro de una directoio dado
     '#Include Once "windows.bi"
     ' agregamos busqueda por tamaño  compilado para amd64 v3  
 '            fbc64 -gen gcc -t 65536 -fpu SSE -arch amd64 
@@ -11,13 +13,13 @@
  ''''End
  ' falta recorer las extensiones en algunos casos SEGUIR
 
-    Dim As String text, filename,  extension
+    Dim As String text, filename,  extension, directorio
     Dim  filetype(1 To 10) As String
     
     Dim aop As String
     Dim Shared NRO As UInteger<64>
     Dim nume As UInteger<64>
-    Dim Shared As Integer cant, i, cont, tamdesde, tamhasta, longitud   
+    Dim Shared As Integer cant, i, cont, tamdesde, tamhasta, longitud, grabar=0,paginado=0   
     Declare Sub tama ()        
     Dim Shared As String tipo, text1
 
@@ -32,6 +34,8 @@
     Print " El Nombre o la/las Extension pueden estar en blanco  "
     Print " Un tamaño sugerido a partir del cual mostrar  y otro donde no mostrar mas " 
     Print "Autor:Jose M Galeano Bs As argentina"
+    Print "En la raiz de C:\ el sistema no suele dejar grabar, si no trabaja en raiz no habra problema"
+    Print " para buscar desde la raiz de C:\ y grabar ingresaremos un archivo y el path"
     Input "Entre  parte del [N]ombre : ", filename
     
     Input "Absoluto o parcial aA/Pp: ", aop
@@ -39,7 +43,17 @@
     Input "Entre hasta 10 [E]xtensiones de a una, nada para terminar y/o todas: ", extension
     Input "Entre tamaño 1 desde ", tamdesde
     Input "Entre tamaño 2 hasta ", tamhasta
-
+    Input "Graba el resultado en Veo.txt ? 1 si 0 o enter no ", grabar
+    Input "paginado por pantalla ? 1 si 0 o enter no ", paginado
+    If grabar=1 Then
+       Input "directorio donde grabar, solo si  estamos en raiz ", directorio
+       If directorio > "" Then
+          directorio=Trim(directorio) 
+          Open "c:\" + directorio + "\Veo.txt" For Output As 2
+       Else
+          Open "Veo.txt" For Output As 2
+       EndIf 
+    EndIf
      If (filename = "")  And (extension = "") And tamdesde=0 And tamhasta=0 Then
       Print "ingrese alguna parte de un nombre  o alguna extension o tamaño"
       
@@ -176,7 +190,7 @@
               EndIf     	 
               If flagname And flagtype  Then
                  tipo= "" 
-                 Print "flagname And flagtype trues"
+                 ''Print "flagname And flagtype trues"
                 If tamdesde=0 And tamhasta=0 Then
                    longitud=0
                    tipo = " [NE]"
@@ -238,7 +252,7 @@
      
 Loop
 
-    close #1
+    close #1, #2
 
   Print "FIN => "
   print "Fin de la busqueda  Presione para salir...." 
@@ -250,12 +264,17 @@ Loop
     End
 Sub tama()
     Print tipo; text1
+    If grabar=1 Then
+       Print #2, text1 
+    EndIf
     If  longitud> 0 Then 
        Print " ";longitud
     EndIf  
     NRO = NRO + 1
     If NRO = 20 Then
-       Print "presione para mas..."
+       If paginado=1 Then
+         Print "presione para mas..."
+       EndIf
        NRO = 0
        Sleep
     EndIf
