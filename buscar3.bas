@@ -25,8 +25,9 @@
     Dim nume As UInteger<64>
     Dim Shared As Integer cant, i, cont, tamdesde, tamhasta, longitud, grabar=0,paginado=0,dires=0   
     Declare Sub tama ()        
-    Dim Shared As String tipo, text1, lugar
+    Dim Shared As String tipo, text1, lugar,anv 
     dim Shared blink as Short = 0
+
     'Screen 20, 32, 1          
     'Color &h000040, &h008080
  Do
@@ -45,6 +46,19 @@
     Input "Absoluto o parcial aA/Pp: ", aop
     cant=0
     Input "Entre hasta 10 [E]xtensiones de a una, nada para terminar y/o todas: ", extension
+    Do
+      If extension > "" Then
+      	extension = "."+ RTrim(LTrim(UCase(extension)))
+      	cant=cant + 1
+      	filetype(cant) = extension
+         Print "Entre Extension "; cant + 1 ; " : ";
+         Input  extension
+         Print
+      Else
+         Exit Do     
+      EndIf    
+    Loop
+ 
     Input "Entre tamaño 1 desde ", tamdesde
     Input "Entre tamaño 2 hasta ", tamhasta
     Input "Graba el resultado en Veo.txt ? 1 si 0 o enter no ", grabar
@@ -66,11 +80,14 @@
 '''   DirEjecSinBarra=lugar
 '' falta una funcion que me deje seleccionar varias carpetas y me devuelva un
 '' array con los path de los directorios
-Print 
-For i = 1 To dires 
-directorios(i) = ShellFolder( "Seleccionar Carpeta de Cancion", nameCurDir)
- Print i,directorios(i)
-Next i
+       Print
+       Input "archivo nuevo [N/n] o viejo [V/v] ", anv
+       anv=UCase(RTrim(LTrim(anv)))
+ 
+       For i = 1 To dires 
+         directorios(i) = ShellFolder( "Seleccionar Carpeta ", nameCurDir  )
+         Print i,directorios(i)
+       Next i
     EndIf
 
     If (filename = "")  And (extension = "") And tamdesde=0 And tamhasta=0 Then
@@ -80,23 +97,11 @@ Next i
     EndIf 
  Loop
 
-    Dim anv As String 
+ ''Dim anv As String 
   
-    Do
-      If extension > "" Then
-      	extension = "."+ RTrim(LTrim(UCase(extension)))
-      	cant=cant + 1
-      	filetype(cant) = extension
-         Print "Entre Extension "; cant + 1 ; " : ";
-         Input  extension
-         Print
-      Else
-         Exit Do     
-      EndIf    
-    Loop
 
-    Input "archivo nuevo [N/n] o viejo [V/v] ", anv
-    anv=UCase(RTrim(LTrim(anv)))
+'    Input "archivo nuevo [N/n] o viejo [V/v] ", anv
+'    anv=UCase(RTrim(LTrim(anv)))
     
     filename = RTrim(LTrim(UCase(filename)))
     aop     = RTrim(LTrim(UCase(aop)))
